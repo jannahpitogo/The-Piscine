@@ -1,38 +1,67 @@
 export let getUser = [];
-
-// const userData = [];
+export let tempInput = "";
+export let inserteduser = []; 
+export const fetchedUsers = [];
 
 //GETTING THE USERS INPUT
-export function gettingInput(idName, storage) {
-  const inputElement = document.getElementById(idName); //input
-  storage.push(inputElement.value);
-  //   storage = localStorage.setItem("users", inputElement.value);
-  //   console.log(storage);
+//idName = inputForm
+//storage = MainStorage
+//tempStorage = Input Value temporary Storage
+//inserted = array Storage that will be pushed to main storage
+//display = where to display the value
+export function gettingInput(idName, storage, tempStorage, inserted, display) {
+  const inputElement = document.getElementById(idName);
+  if (!inputElement) return [];
+
+  tempStorage = inputElement.value.trim();
+  if (!tempStorage) return [];
+
+  inserted = tempStorage
+    .split(/[,\s]+/)
+    .map((username) => username.trim())
+    .filter(Boolean);
+
+  if (inserted.length === 0) return [];
+
+  const newUsers = inserted.filter((username) => !storage.includes(username));
+  storage.push(...newUsers);
+  displayUser(storage, display);
+  inputElement.value = "";
+
+  return newUsers;
 }
 
+// module.exports = gettingInput;
+
 //THIS FUNCTION IS GETTING THE USERS FROM INPUT AND PUSHING TO ARRAY AS WELL AS DISPLAY IT
-export function displayUser() {
-  //displaying
-  const userContainer = document.createElement("div"); //div p container
-  userContainer.id = "users-container";
-  const showUsers = document.getElementById("showing-users"); //p
-  showUsers.textContent = getUser;
+export function displayUser(array, displayContainer) {
+  const showUsers = document.getElementById(displayContainer); //p users container
+  if (!showUsers) return;
+  showUsers.textContent = array.join(", ");
 }
 
 export async function fetchUsers(users) {
-  let endpoint = "https://www.codewars.com/api/v1/users/";
-  const results = [];
+  const endpoint = "https://www.codewars.com/api/v1/users/";
+  const usernames = [...new Set(users.map((user) => user.trim()).filter(Boolean))];
+ 
 
-  for (let i = 0; i < getUser.length; i++) {
-    const userDatas = users.map(async (username) => {
-      const res = await fetch(`${endpoint}${username}`);
-      if (!res.ok) throw new Error(`Failed to receive data of ${username}`);
-      return res.json();
-    });
-
-    const allData = await Promise.all(userDatas);
-    results.push(...allData);
+  if (usernames.length === 0) {
+    alert("No usernames to fetch.");
+    return [];
   }
-  console.log(results);
-  return results;
+  
+  for (const user of usernames) {
+    try {
+      const res = await fetch(`${endpoint}${user}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      fetchedUsers.push(data);
+    } catch(error) {
+      alert(`Failed to fetch: ${user}`);
+    }
+  }
+  return fetchedUsers;
 }

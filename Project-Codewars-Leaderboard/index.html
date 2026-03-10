@@ -19,15 +19,16 @@
 </head>
 
 <body>
-
-  <img src="images/sword.png" alt="icon of a ship radar with red dots" id="icon">
-  <h1>Codewars Arena</h1>
-  <h2>Insert usernames and check out the leaderboard</h2>
-  <div id="input-form">
-    <input type="text" id="user-input">
-  </div>
-  <label id="label-input_form" for="user-input">To add more than 1 username, separate it by space. Example: username1
-    username2</label>
+  <main>
+    <img src="images/sword.png" alt="Crossed sword icon" id="icon">
+    <h1>Codewars Arena</h1>
+    <h2>Insert usernames and check out the leaderboard</h2>
+    <div id="input-form">
+      <input type="text" id="user-input" placeholder="username1 username2" aria-describedby="label-input_form"
+        autocomplete="off">
+    </div>
+    <p id="label-input_form">To add more than one username, separate them by spaces or commas.</p>
+  </main>
 
 </body>
 
